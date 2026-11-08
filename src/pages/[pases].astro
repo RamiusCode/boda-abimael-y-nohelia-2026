@@ -1,0 +1,18 @@
+---
+// src/pages/[pases].astro — un link por cantidad de pases:
+//   /1  /2  /3  /4  /5
+// Para permitir más pases, subir MAXIMO_PASES.
+import Invitacion from "../components/Invitacion.astro";
+
+export function getStaticPaths() {
+    const MAXIMO_PASES = 5;
+    return Array.from({ length: MAXIMO_PASES }, (_, i) => ({
+        params: { pases: String(i + 1) },
+        props: { numeroPases: i + 1 },
+    }));
+}
+
+const { numeroPases } = Astro.props;
+---
+
+<Invitacion numeroPases={numeroPases} />

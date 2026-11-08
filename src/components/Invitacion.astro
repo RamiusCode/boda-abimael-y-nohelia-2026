@@ -1,0 +1,64 @@
+---
+// src/components/Invitacion.astro
+// La invitación completa, en un solo lugar.
+// La usan src/pages/index.astro (1 pase) y src/pages/[pases].astro (/1 a /5).
+// Para agregar, quitar o reordenar secciones, se cambia SOLO acá.
+import Layout from "../layouts/Layout.astro";
+
+import Portada from "./Portada.astro";
+import NombresFlores from "./NombresFlores.astro";
+import Contador from "./Contador.astro";
+import DirecionCeremonia from "./DireccionCeremonia.astro";
+import DirecionRecepcion from "./DireccionRecepcion.astro";
+import NombresPadres from "./NombresPadres.astro";
+import Padrinos from "./Padrinos.astro";
+import Fotos from "./Fotos.astro";
+import Itinerario from "./Itinerario.astro";
+import CodigoVestimenta from "./CodigoVestimenta.astro";
+import SugerenciaRegalo from "./SugerenciaRegalo.astro";
+import Fotos2 from "./Fotos2.astro";
+import Fotos3 from "./Fotos3.astro";
+import Restriccion from "./Restriccion.astro";
+import Confirmar from "./Confirmar.astro";
+import Compartirfotos from "./Compartirfotos.astro";
+import Reproductor from "./Reproductor.astro";
+import Despedida from "./Despedida.astro";
+import Calendario from "./Calendario.astro";
+import Cita from "./Cita.astro";
+import Pase from "./Pase.astro";
+import Foto from "./Foto.astro";
+import Video from "./Video.astro";
+
+interface Props {
+    numeroPases: number;
+}
+
+const { numeroPases } = Astro.props;
+---
+
+<Layout title="Abimael & Nohelia">
+    <Portada />
+    <NombresFlores />
+    <Cita />
+    <!-- <Reproductor /> -->
+    <Contador />
+    <Calendario />
+    <DirecionCeremonia />
+    <DirecionRecepcion />
+    <NombresPadres />
+    <Padrinos />
+    <Video />
+
+    <!-- <Fotos />  este es ls foto original-->
+    <Itinerario />
+    <CodigoVestimenta />
+    <SugerenciaRegalo />
+    <!-- <Fotos2 /> -->
+    <Restriccion />
+    <!-- <Compartirfotos /> -->
+    <Pase numeroPases={numeroPases} />
+    <Confirmar />
+    <Foto />
+    <!-- <Fotos3 /> -->
+    <Despedida />
+</Layout>

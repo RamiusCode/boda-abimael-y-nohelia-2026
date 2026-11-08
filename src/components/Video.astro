@@ -1,0 +1,482 @@
+---
+// Video.astro — video vertical de los novios
+// · Empieza solo cuando aparece en pantalla y se repite al terminar
+// · Se pausa al salir de pantalla (ahorra batería y datos)
+// · Empieza a cargar poco antes de llegar, no al abrir la invitación
+// · La foto queda encima hasta que el video realmente se ve: nunca aparece en negro
+// · Controles propios: retroceder 5 s, pausa, adelantar 5 s y barra dorada
+// · Sin sonido: los celulares solo permiten reproducción automática en silencio
+//   y la invitación ya tiene su música de fondo
+const VIDEO = "/imagenes/video2.mp4"; // versión comprimida (el original es video.mp4)
+const POSTER = "/imagenes/foto1.jpg"; // se ve mientras el video carga
+const SALTO = 5; // segundos que retroceden / adelantan los botones
+---
+
+<section class="relative w-full py-12 px-6 overflow-hidden" id="seccion-video">
+    <!-- TÍTULO -->
+    <div class="text-center mb-10" id="video-titulo">
+        <h2
+            class="font-great-vibes text-[2.25rem] leading-tight text-[#5E6B4A] mb-3"
+        >
+            Nuestra Historia
+        </h2>
+        <div class="flex items-center justify-center gap-3 mb-4">
+            <div
+                class="w-16 h-[2px] bg-gradient-to-r from-transparent to-[#9a864a]"
+            >
+            </div>
+            <div class="w-2 h-2 rounded-full bg-[#9a864a]"></div>
+            <div
+                class="w-16 h-[2px] bg-gradient-to-l from-transparent to-[#9a864a]"
+            >
+            </div>
+        </div>
+        <p class="font-crimson text-lg md:text-xl text-[#5E6B4A]/80">
+            Cada momento juntos nos trajo hasta aquí
+        </p>
+    </div>
+
+    <!-- MARCO DEL VIDEO -->
+    <div class="relative mx-auto w-full max-w-[290px]" id="video-marco">
+        <!-- 🌿 RAMA SUPERIOR IZQUIERDA -->
+        <img
+            src="/imagenes/floresverde.png"
+            alt=""
+            aria-hidden="true"
+            id="flor-izquierda-video"
+            class="pointer-events-none select-none absolute w-[48%] z-30"
+            style="top: -9%; left: -22%;"
+        />
+
+        <!-- 🌿 RAMA INFERIOR DERECHA (simetría de 180°) -->
+        <img
+            src="/imagenes/floresverde.png"
+            alt=""
+            aria-hidden="true"
+            id="flor-derecha-video"
+            class="pointer-events-none select-none absolute w-[48%] z-30 rotate-180"
+            style="bottom: -9%; right: -22%;"
+        />
+
+        <!-- Esquinas doradas (mismo detalle que la galería) -->
+        <div class="absolute -inset-3 rounded-[2rem] pointer-events-none z-0">
+            <div class="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[#9a864a]/50 rounded-tl-2xl"></div>
+            <div class="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[#9a864a]/50 rounded-tr-2xl"></div>
+            <div class="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[#9a864a]/50 rounded-bl-2xl"></div>
+            <div class="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-[#9a864a]/50 rounded-br-2xl"></div>
+        </div>
+
+        <!-- Video -->
+        <div
+            class="video-cuadro relative overflow-hidden rounded-[1.5rem] z-10"
+            id="video-cuadro"
+            style="aspect-ratio: 9/16;"
+        >
+            <video
+                id="video-novios"
+                class="absolute inset-0 w-full h-full object-cover"
+                src={VIDEO}
+                poster={POSTER}
+                muted
+                loop
+                playsinline
+                preload="none"
+                disablepictureinpicture
+                aria-label="Video de Abimael y Nohelia"
+            ></video>
+
+            <!-- Foto encima: se desvanece cuando el video ya se está viendo -->
+            <img
+                id="video-portada"
+                src={POSTER}
+                alt=""
+                aria-hidden="true"
+                class="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            />
+
+            <!-- Velo inferior para que se lean los nombres y los controles -->
+            <div
+                class="absolute bottom-0 left-0 right-0 h-36 pointer-events-none"
+                style="background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);"
+            >
+            </div>
+
+            <!-- Nombres sobre el video (se ocultan mientras se ven los controles) -->
+            <div
+                class="absolute bottom-9 left-0 right-0 pointer-events-none"
+                id="video-nombres"
+            >
+                <div class="nombres-interior flex items-center justify-center gap-2 px-3">
+                    <div class="w-4 h-px bg-white/50 shrink-0"></div>
+                    <span class="font-great-vibes text-[1.75rem] text-white leading-none drop-shadow whitespace-nowrap">
+                        Abimael & Nohelia
+                    </span>
+                    <div class="w-4 h-px bg-white/50 shrink-0"></div>
+                </div>
+            </div>
+
+            <!-- CONTROLES: aparecen al tocar el video, se ocultan solos -->
+            <div
+                id="video-controles"
+                class="absolute bottom-8 left-0 right-0 flex items-center justify-center gap-5"
+            >
+                <button
+                    type="button"
+                    id="video-atras"
+                    class="btn-video w-11 h-11"
+                    aria-label={`Retroceder ${SALTO} segundos`}
+                >
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"></path>
+                        <path d="M4.5 4.5v3.6h3.6"></path>
+                        <text x="12.2" y="15.4" text-anchor="middle" font-size="7.5" fill="#fff" stroke="none" font-family="Georgia, serif">{SALTO}</text>
+                    </svg>
+                </button>
+
+                <button
+                    type="button"
+                    id="video-play"
+                    class="btn-video w-14 h-14"
+                    aria-label="Pausar video"
+                >
+                    <svg id="icono-pausa" class="w-6 h-6" viewBox="0 0 24 24" fill="#fff">
+                        <rect x="6.5" y="5" width="3.6" height="14" rx="1"></rect>
+                        <rect x="13.9" y="5" width="3.6" height="14" rx="1"></rect>
+                    </svg>
+                    <svg id="icono-play" class="w-6 h-6 ml-1 hidden" viewBox="0 0 24 24" fill="#fff">
+                        <path d="M7 4.5v15l12.5-7.5z"></path>
+                    </svg>
+                </button>
+
+                <button
+                    type="button"
+                    id="video-adelante"
+                    class="btn-video w-11 h-11"
+                    aria-label={`Adelantar ${SALTO} segundos`}
+                >
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"></path>
+                        <path d="M19.5 4.5v3.6h-3.6"></path>
+                        <text x="11.8" y="15.4" text-anchor="middle" font-size="7.5" fill="#fff" stroke="none" font-family="Georgia, serif">{SALTO}</text>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- BARRA DORADA: siempre visible, se toca o arrastra -->
+            <div
+                id="video-barra"
+                class="absolute left-4 right-4 bottom-2 py-2.5 cursor-pointer"
+                role="slider"
+                aria-label="Avance del video"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+                tabindex="0"
+            >
+                <div class="relative h-[3px] rounded-full bg-white/35">
+                    <div
+                        id="video-relleno"
+                        class="absolute left-0 top-0 h-full rounded-full bg-[#d9c27a]"
+                        style="width: 0%;"
+                    >
+                    </div>
+                    <div
+                        id="video-punto"
+                        class="absolute top-1/2 w-3 h-3 -mt-1.5 -ml-1.5 rounded-full bg-[#d9c27a] shadow"
+                        style="left: 0%;"
+                    >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const SALTO = 5; // mismo valor que en el encabezado del componente
+    const OCULTAR_CONTROLES_MS = 3000;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const video = document.getElementById("video-novios") as HTMLVideoElement | null;
+        const cuadro = document.getElementById("video-cuadro");
+        const portada = document.getElementById("video-portada");
+        const btnPlay = document.getElementById("video-play");
+        const btnAtras = document.getElementById("video-atras");
+        const btnAdelante = document.getElementById("video-adelante");
+        const iconoPausa = document.getElementById("icono-pausa");
+        const iconoPlay = document.getElementById("icono-play");
+        const barra = document.getElementById("video-barra");
+        const relleno = document.getElementById("video-relleno");
+        const punto = document.getElementById("video-punto");
+        if (!video || !cuadro) return;
+
+        let pausadoPorInvitado = false;
+        let timerControles: ReturnType<typeof setTimeout> | undefined;
+
+        // ── CARGA ANTICIPADA: un poco antes de llegar al video ──
+        const precarga = new IntersectionObserver(
+            ([e]) => {
+                if (!e.isIntersecting) return;
+                video.preload = "auto";
+                // Solo si todavía no empezó: load() reinicia el video
+                if (video.readyState === 0 && video.paused) video.load();
+                precarga.disconnect();
+            },
+            { rootMargin: "600px 0px" },
+        );
+        precarga.observe(video);
+
+        // ── LA FOTO SE VA SOLO CUANDO YA HAY IMAGEN DE VIDEO ──
+        let portadaOculta = false;
+        const ocultarPortada = () => {
+            if (portadaOculta || !portada) return;
+            portadaOculta = true;
+            gsap.to(portada, { opacity: 0, duration: 0.8, ease: "power2.out" });
+        };
+        video.addEventListener("timeupdate", () => {
+            if (video.currentTime > 0.05) ocultarPortada();
+        });
+
+        // ── CONTROLES ──
+        const mostrarControles = () => {
+            cuadro.classList.add("controles-visibles");
+            clearTimeout(timerControles);
+            // En pausa quedan visibles; reproduciendo se ocultan solos
+            if (!video.paused) {
+                timerControles = setTimeout(
+                    () => cuadro.classList.remove("controles-visibles"),
+                    OCULTAR_CONTROLES_MS,
+                );
+            }
+        };
+
+        const reproducir = () => {
+            video.muted = true; // requisito de los celulares para reproducir solo
+            video.play().catch(() => {
+                // Modo ahorro de batería (iPhone) bloquea la reproducción:
+                // se muestran los controles para que el invitado toque play
+                mostrarControles();
+            });
+        };
+
+        const actualizarIcono = () => {
+            const enPausa = video.paused;
+            iconoPausa?.classList.toggle("hidden", enPausa);
+            iconoPlay?.classList.toggle("hidden", !enPausa);
+            btnPlay?.setAttribute("aria-label", enPausa ? "Reproducir video" : "Pausar video");
+        };
+        video.addEventListener("play", actualizarIcono);
+        video.addEventListener("pause", actualizarIcono);
+
+        btnPlay?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (video.paused) {
+                pausadoPorInvitado = false;
+                reproducir();
+            } else {
+                pausadoPorInvitado = true;
+                video.pause();
+            }
+            mostrarControles();
+        });
+
+        const saltar = (segundos: number) => {
+            if (!video.duration) return;
+            const t = video.currentTime + segundos;
+            // Con loop, adelantar al final vuelve al inicio y viceversa
+            video.currentTime = (t + video.duration) % video.duration;
+            pintarAvance();
+            mostrarControles();
+        };
+        btnAtras?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            saltar(-SALTO);
+        });
+        btnAdelante?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            saltar(SALTO);
+        });
+
+        // Tocar el video: si está en pausa lo reproduce, si no muestra/oculta controles
+        cuadro.addEventListener("click", () => {
+            if (video.paused) {
+                pausadoPorInvitado = false;
+                reproducir();
+                mostrarControles();
+            } else if (cuadro.classList.contains("controles-visibles")) {
+                clearTimeout(timerControles);
+                cuadro.classList.remove("controles-visibles");
+            } else {
+                mostrarControles();
+            }
+        });
+
+        // ── BARRA DE AVANCE ──
+        const pintarAvance = () => {
+            if (!video.duration) return;
+            const pct = (video.currentTime / video.duration) * 100;
+            if (relleno) relleno.style.width = `${pct}%`;
+            if (punto) punto.style.left = `${pct}%`;
+            barra?.setAttribute("aria-valuenow", String(Math.round(pct)));
+        };
+
+        let rafId = 0;
+        const bucle = () => {
+            pintarAvance();
+            rafId = requestAnimationFrame(bucle);
+        };
+        video.addEventListener("playing", () => {
+            cancelAnimationFrame(rafId);
+            bucle();
+        });
+        video.addEventListener("pause", () => cancelAnimationFrame(rafId));
+
+        if (barra) {
+            let arrastrando = false;
+            const irA = (clientX: number) => {
+                if (!video.duration) return;
+                const r = barra.getBoundingClientRect();
+                const pct = Math.min(Math.max((clientX - r.left) / r.width, 0), 1);
+                video.currentTime = pct * video.duration;
+                pintarAvance();
+            };
+            barra.addEventListener("click", (e) => e.stopPropagation());
+            barra.addEventListener("pointerdown", (e) => {
+                e.stopPropagation();
+                arrastrando = true;
+                barra.setPointerCapture(e.pointerId);
+                irA(e.clientX);
+                mostrarControles();
+            });
+            barra.addEventListener("pointermove", (e) => {
+                if (arrastrando) irA(e.clientX);
+            });
+            const soltar = () => {
+                arrastrando = false;
+                mostrarControles();
+            };
+            barra.addEventListener("pointerup", soltar);
+            barra.addEventListener("pointercancel", soltar);
+            barra.addEventListener("keydown", (e) => {
+                if (e.key === "ArrowLeft") saltar(-SALTO);
+                if (e.key === "ArrowRight") saltar(SALTO);
+            });
+        }
+
+        // ── REPRODUCCIÓN AUTOMÁTICA AL APARECER EN PANTALLA ──
+        const observador = new IntersectionObserver(
+            ([entrada]) => {
+                if (entrada.isIntersecting) {
+                    if (!pausadoPorInvitado) reproducir();
+                } else {
+                    video.pause();
+                }
+            },
+            { threshold: 0.5 },
+        );
+        observador.observe(video);
+
+        // ── ANIMACIONES DE ENTRADA ──
+        const tl = gsap.timeline({
+            defaults: { ease: "power3.out" },
+            scrollTrigger: {
+                trigger: "#seccion-video",
+                start: "top 80%",
+                toggleActions: "play none none reset",
+            },
+        });
+
+        tl.fromTo(
+            "#video-titulo",
+            { opacity: 0, y: -28 },
+            { opacity: 1, y: 0, duration: 1 },
+        )
+            .fromTo(
+                "#video-marco",
+                { opacity: 0, y: 40, scale: 0.95 },
+                { opacity: 1, y: 0, scale: 1, duration: 1.2 },
+                "-=0.5",
+            )
+            .fromTo(
+                "#flor-izquierda-video",
+                { opacity: 0, x: -60, scale: 0.92 },
+                { opacity: 1, x: 0, scale: 1, duration: 1.4 },
+                "-=0.9",
+            )
+            .fromTo(
+                "#flor-derecha-video",
+                { opacity: 0, x: 60, scale: 0.92, rotation: 180 },
+                { opacity: 1, x: 0, scale: 1, rotation: 180, duration: 1.4 },
+                "<",
+            )
+            .fromTo(
+                "#video-nombres",
+                { opacity: 0, y: 12 },
+                { opacity: 1, y: 0, duration: 1 },
+                "-=0.8",
+            );
+    });
+</script>
+
+<style>
+    /* Línea dorada fina alrededor del video + sombra suave */
+    .video-cuadro {
+        box-shadow:
+            0 0 0 1px rgba(154, 134, 74, 0.55),
+            0 0 0 5px rgba(255, 255, 255, 0.7),
+            0 0 0 6px rgba(154, 134, 74, 0.35),
+            0 18px 40px -12px rgba(74, 85, 56, 0.45);
+        background: #e8e6dc;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Botones redondos translúcidos */
+    .btn-video {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        transition: transform 0.2s ease, background 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .btn-video:active {
+        transform: scale(0.9);
+        background: rgba(255, 255, 255, 0.32);
+    }
+    .btn-video:focus {
+        outline: none;
+    }
+
+    /* Controles ocultos por defecto; los nombres ocupan su lugar */
+    #video-controles {
+        opacity: 0;
+        transform: translateY(8px);
+        pointer-events: none;
+        transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .nombres-interior {
+        transition: opacity 0.35s ease;
+    }
+    .controles-visibles #video-controles {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+    .controles-visibles .nombres-interior {
+        opacity: 0;
+    }
+
+    #video-barra:focus {
+        outline: none;
+    }
+</style>
